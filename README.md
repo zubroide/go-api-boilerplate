@@ -1,6 +1,31 @@
 # Go API Boilerplate
 
 
+## Features
+
+- [x] Framework for API: Gin
+- [x] Package manager: Govendor
+- [x] DI: Based on service container
+- [x] Layers: Controller->Service->Repository->Entity
+- [x] Routes: Gin
+- [x] Process controller results and convert them into JSON/XML according to request headers
+- [x] Logger: logrus
+- [x] Environment variables, config: Viper
+- [x] ORM: GORM
+- [x] Migrations: gorm-goose
+- [x] Base CRUD service
+- [x] Base CRUD repository
+- [x] Base CRUD controller
+- [x] Request validation (Gin)
+- [x] Console commands: Cobra
+- [x] Unit tests with overriding of services in DI (`go test`)
+- [x] Code coverage by tests (`go tool cover`)
+- [x] Logger integration with Sentry: logrus_sentry
+- [x] Setup alerting for unhandled errors
+- [x] Swagger
+- [x] Docker compose
+
+
 ## Folders structure
 
 - `command/`: Console commands.
