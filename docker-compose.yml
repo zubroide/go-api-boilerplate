@@ -1,0 +1,41 @@
+version: "3.3"
+
+volumes:
+
+#  code:
+#    driver: local
+#    driver_opts:
+#      type: 'none'
+#      o: 'bind'
+#      device: $PWD
+
+  db: {}
+
+services:
+
+  go:
+    container_name: go-api-boilerplate-go
+    build:
+      context: .
+      dockerfile: docker/go/Dockerfile
+#    volumes:
+#      - code:/go/src/go-api-boilerplate
+#      - ./docker/cron/crontab:/etc/cron.d/go-api-boilerplate
+    ports:
+    - 8080:80
+    environment:
+      DB_URL: host=db user=go-api-boilerplate dbname=go-api-boilerplate sslmode=disable password=go-api-boilerplate
+    links:
+      - db
+    restart: unless-stopped
+
+  db:
+    container_name: go-api-boilerplate-db
+    image: postgres
+    volumes:
+      - db:/var/lib/postgresql
+    environment:
+      POSTGRES_DB: go-api-boilerplate
+      POSTGRES_USER: go-api-boilerplate
+      POSTGRES_PASSWORD: go-api-boilerplate
+    restart: unless-stopped

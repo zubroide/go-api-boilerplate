@@ -1,0 +1,6 @@
+.idea
+
+gin-bin
+.env
+
+coverage.out
