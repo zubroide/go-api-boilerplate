@@ -15,7 +15,6 @@ type PaginationParameters struct {
 }
 
 type CrudListParameters struct {
-	ListParametersInterface
 	*PaginationParameters
 }
 

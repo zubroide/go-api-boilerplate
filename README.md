@@ -48,7 +48,15 @@
 - `base.env`: Base environment variables.
 
 
-## How to use
+## How to use (Docker)
+
+
+```bash
+docker-compose up --build
+```
+
+
+## How to use (without Docker)
 
 
 ### Prepare environment for Go projects if you do not done it early
@@ -57,7 +65,7 @@
 sudo apt update
 sudo apt upgrade
 # See last version here: https://golang.org/dl/
-wget https://dl.google.com/go/go1.11.1.linux-amd64.tar.gz
+wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
 sudo tar -xvf go1.11.1.linux-amd64.tar.gz
 sudo mv go /usr/local
 sudo mcedit /etc/profile
