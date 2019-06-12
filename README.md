@@ -55,6 +55,8 @@
 docker-compose up --build
 ```
 
+Check http://localhost:8080
+
 
 ## How to use (without Docker)
 
