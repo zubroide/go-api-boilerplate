@@ -1,7 +1,6 @@
 package unit
 
 import (
-	"github.com/sarulabs/di/v2"
 	"github.com/zubroide/go-api-boilerplate/dic"
 	"github.com/zubroide/go-api-boilerplate/model/entity"
 	"github.com/zubroide/go-api-boilerplate/model/repository"
@@ -31,12 +30,10 @@ func TestGetItem(t *testing.T) {
 	// It is not good way, because we cannot override provided type with another.
 	// So we must specify here all services
 	dic.InitBuilder()
-	dic.Builder.Set(di.Def{
-		Name: dic.UserRepository,
-		Build: func(ctn di.Container) (interface{}, error) {
-			return NewUserRepositoryMock(), nil
-		},
-	})
+	dic.Builder.Set(
+		dic.UserRepository,
+		NewUserRepositoryMock(),
+	)
 	dic.Container = dic.Builder.Build()
 
 	userService := dic.Container.Get(dic.UserService).(service.UserServiceInterface)
