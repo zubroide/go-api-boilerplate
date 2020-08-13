@@ -1,3 +1,4 @@
 development:
   driver: postgres
-  open: user=postgres dbname=go-api-boilerplate sslmode=disable password=postgres
+  open: $DB_URL
+  dsn: $DB_URL

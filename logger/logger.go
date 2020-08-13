@@ -10,18 +10,16 @@ import (
 	"time"
 )
 
-type Logger struct {
-	logrus.Logger
+type LoggerInterface interface {
+	Error(args ...interface{})
 }
 
-func NewLogger(client *raven.Client) *Logger {
-	logger := &Logger{
-		logrus.Logger{
-			Out:       os.Stdout,
-			Formatter: &logrus.TextFormatter{ForceColors: true},
-			Hooks:     make(logrus.LevelHooks),
-			Level:     logrus.InfoLevel,
-		},
+func NewLogger(client *raven.Client) LoggerInterface {
+	logger := logrus.Logger{
+		Out:       os.Stdout,
+		Formatter: &logrus.TextFormatter{ForceColors: true},
+		Hooks:     make(logrus.LevelHooks),
+		Level:     logrus.InfoLevel,
 	}
 
 	if client != nil {
@@ -39,7 +37,7 @@ func NewLogger(client *raven.Client) *Logger {
 		}
 	}
 
-	return logger
+	return &logger
 }
 
 func NewRavenClient() *raven.Client {

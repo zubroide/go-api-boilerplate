@@ -1,21 +1,22 @@
 package service
 
 import (
-	"go-api-boilerplate/logger"
-	"go-api-boilerplate/model/repository"
+	"github.com/zubroide/go-api-boilerplate/logger"
+	"github.com/zubroide/go-api-boilerplate/model/repository"
+	"github.com/zubroide/gorm-crud"
 )
 
 type UserServiceInterface interface {
-	CrudServiceInterface
+	gorm_crud.CrudServiceInterface
 }
 
 type UserService struct {
-	*CrudService
+	*gorm_crud.CrudService
 	repository repository.UserRepositoryInterface
 }
 
-func NewUserService(repository repository.UserRepositoryInterface, logger *logger.Logger) UserServiceInterface {
-	crudService := NewCrudService(repository, logger).(*CrudService)
+func NewUserService(repository repository.UserRepositoryInterface, logger logger.LoggerInterface) UserServiceInterface {
+	crudService := gorm_crud.NewCrudService(repository, logger).(*gorm_crud.CrudService)
 	service := &UserService{crudService, repository}
 	return service
 }

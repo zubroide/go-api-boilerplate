@@ -1,8 +1,8 @@
 package description
 
 import (
-	"go-api-boilerplate/model/entity"
-	"go-api-boilerplate/model/repository"
+	"github.com/zubroide/go-api-boilerplate/model/entity"
+	"github.com/zubroide/go-api-boilerplate/model/repository"
 )
 
 // User data

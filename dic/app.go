@@ -1,14 +1,14 @@
 package dic
 
 import (
-	"go-api-boilerplate/controller"
-	"go-api-boilerplate/logger"
-	"go-api-boilerplate/model/db"
-	"go-api-boilerplate/model/repository"
-	"go-api-boilerplate/model/service"
 	"github.com/getsentry/raven-go"
 	"github.com/jinzhu/gorm"
-	"github.com/mnvx/di"
+	"github.com/sarulabs/di/v2"
+	"github.com/zubroide/go-api-boilerplate/controller"
+	"github.com/zubroide/go-api-boilerplate/logger"
+	"github.com/zubroide/go-api-boilerplate/model/db"
+	"github.com/zubroide/go-api-boilerplate/model/repository"
+	"github.com/zubroide/go-api-boilerplate/model/service"
 )
 
 var Builder *di.Builder
@@ -58,21 +58,21 @@ func RegisterServices(builder *di.Builder) {
 	builder.Add(di.Def{
 		Name: UserRepository,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return repository.NewUserRepository(ctn.Get(Db).(*gorm.DB), ctn.Get(Logger).(*logger.Logger)), nil
+			return repository.NewUserRepository(ctn.Get(Db).(*gorm.DB), ctn.Get(Logger).(logger.LoggerInterface)), nil
 		},
 	})
 
 	builder.Add(di.Def{
 		Name: UserService,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return service.NewUserService(ctn.Get(UserRepository).(repository.UserRepositoryInterface), ctn.Get(Logger).(*logger.Logger)), nil
+			return service.NewUserService(ctn.Get(UserRepository).(repository.UserRepositoryInterface), ctn.Get(Logger).(logger.LoggerInterface)), nil
 		},
 	})
 
 	builder.Add(di.Def{
 		Name: UserController,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return controller.NewUserController(ctn.Get(UserService).(service.UserServiceInterface), ctn.Get(Logger).(*logger.Logger)), nil
+			return controller.NewUserController(ctn.Get(UserService).(service.UserServiceInterface), ctn.Get(Logger).(logger.LoggerInterface)), nil
 		},
 	})
 }

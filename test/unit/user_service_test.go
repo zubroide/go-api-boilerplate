@@ -1,17 +1,18 @@
 package unit
 
 import (
-	"go-api-boilerplate/dic"
-	"go-api-boilerplate/model/entity"
-	"go-api-boilerplate/model/repository"
-	"go-api-boilerplate/model/service"
-	"github.com/mnvx/di"
+	"github.com/sarulabs/di/v2"
+	"github.com/zubroide/go-api-boilerplate/dic"
+	"github.com/zubroide/go-api-boilerplate/model/entity"
+	"github.com/zubroide/go-api-boilerplate/model/repository"
+	"github.com/zubroide/go-api-boilerplate/model/service"
+	"github.com/zubroide/gorm-crud"
 	"testing"
 )
 
 type UserRepositoryMock struct {
-	repository.CrudRepositoryInterface
-	model entity.InterfaceEntity // Dynamic typing
+	gorm_crud.CrudRepositoryInterface
+	model gorm_crud.InterfaceEntity // Dynamic typing
 }
 
 func NewUserRepositoryMock() repository.UserRepositoryInterface {
@@ -20,7 +21,7 @@ func NewUserRepositoryMock() repository.UserRepositoryInterface {
 	return repo
 }
 
-func (c UserRepositoryMock) Find(id uint) (entity.InterfaceEntity, error) {
+func (c UserRepositoryMock) Find(id uint) (gorm_crud.InterfaceEntity, error) {
 	item := &entity.User{UserFields: &entity.UserFields{Name: "test user"}}
 	item.ID = 2
 	return item, nil

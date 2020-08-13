@@ -2,17 +2,15 @@ package entity
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/zubroide/gorm-crud"
 )
-
-type InterfaceEntity interface {
-}
 
 type UserFields struct {
 	Name string  `binding:"required"`
 }
 
 type User struct {
-	InterfaceEntity
+	gorm_crud.InterfaceEntity
 	gorm.Model
 	*UserFields  `binding:"required"`
 }

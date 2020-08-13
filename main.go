@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-api-boilerplate/command"
-	"go-api-boilerplate/dic"
+	"github.com/zubroide/go-api-boilerplate/command"
+	"github.com/zubroide/go-api-boilerplate/dic"
 	"fmt"
 	"github.com/getsentry/raven-go"
 	"github.com/spf13/viper"

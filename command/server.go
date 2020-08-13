@@ -1,10 +1,10 @@
 package command
 
 import (
-	"go-api-boilerplate/dic"
-	"go-api-boilerplate/route"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zubroide/go-api-boilerplate/dic"
+	"github.com/zubroide/go-api-boilerplate/route"
 )
 
 func init() {

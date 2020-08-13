@@ -19,22 +19,27 @@
 package route
 
 import (
-	"go-api-boilerplate/controller"
-	"go-api-boilerplate/dic"
-	_ "go-api-boilerplate/route/description" // For Swagger
 	"github.com/getsentry/raven-go"
 	"github.com/gin-contrib/sentry"
 	"github.com/gin-gonic/gin"
-	"github.com/mnvx/di"
+	"github.com/sarulabs/di/v2"
+	"github.com/spf13/viper"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/zubroide/go-api-boilerplate/controller"
+	"github.com/zubroide/go-api-boilerplate/dic"
+	_ "github.com/zubroide/go-api-boilerplate/route/description" // For Swagger
 	"net/http"
 )
 
 var db = make(map[string]string)
 
 func Setup(builder *di.Builder) *gin.Engine {
-	r := gin.Default()
+	gin.SetMode(viper.GetString("GIN_MODE"))
+
+	r := gin.New()
+	r.Use(gin.Recovery())
+
 	client := dic.Container.Get(dic.RavenClient).(*raven.Client)
 	if client != nil {
 		r.Use(sentry.Recovery(client, false))

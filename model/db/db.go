@@ -12,6 +12,10 @@ func NewDb() *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	//defer db.Close()
+
+	db.DB().SetMaxIdleConns(viper.GetInt("DB_MAX_CONNECTIONS"))
+	db.DB().SetMaxOpenConns(viper.GetInt("DB_MAX_CONNECTIONS"))
+	db.LogMode(viper.GetBool("DB_LOG_MODE"))
+
 	return db
 }
