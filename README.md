@@ -4,7 +4,7 @@
 ## Features
 
 - [x] Framework for API: Gin
-- [x] Package manager: Govendor
+- [x] Package manager: go mod
 - [x] DI: Based on service container
 - [x] Layers: Controller->Service->Repository->Entity
 - [x] Routes: Gin
@@ -144,7 +144,7 @@ mcedit .env
 ### Download vendor packages
 
 ```bash
-govendor sync
+go mod download
 ```
 
 
