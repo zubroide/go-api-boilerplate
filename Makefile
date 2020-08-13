@@ -14,6 +14,10 @@ help:
 	@echo "        Run server"
 	@echo "    migrate"
 	@echo "        Run migrations"
+	@echo "    test"
+	@echo "        Run tests"
+	@echo "    swagger"
+	@echo "        Generate Swagger documentation"
 
 
 .PHONY: server
@@ -26,3 +30,13 @@ server:
 migrate:
 	@cd $(DIR) \
 	&& gorm-goose up
+
+.PHONY: test
+test:
+	@cd $(DIR) \
+	&& go test ./...
+
+.PHONY: swagger
+swagger:
+	@cd $(DIR) \
+	&& swagger generate spec -o doc/swagger.json

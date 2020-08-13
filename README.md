@@ -117,18 +117,18 @@ source init.sh
 ```
 
 
-### Install necessary packages
-
-```bash
-./install/install.sh
-```
-
-
 ### Clone repo
 
 ```bash
 git clone git@github.com:zubroide/go-api-boilerplate.git
 cd go-api-boilerplate
+```
+
+
+### Install necessary packages
+
+```bash
+./install/install.sh
 ```
 
 
@@ -155,14 +155,14 @@ Create database `go-api-boilerplate`.
 And run migrations:
 
 ```bash
-gorm-goose up
+make migrate
 ```
 
 
 ### Run application
 
 ```bash
-gin -i run server
+make server
 ```
 
 Or:
@@ -195,17 +195,23 @@ Run one test:
 go test test/unit/user_service_test.go -v -coverpkg=./... -coverprofile=coverage.out
 ```
 
+Using make:
+
+```bash
+make test
+```
+
 
 ### Generate Swagger documentation
 
 Generate swagger.json:
 
 ```bash
-swagger generate spec -o doc/swagger.json
+make swagger
 ```
 
 Documentation must be available at url http://localhost:8080/swagger/index.html
 
 
-## Support version
-  - Go 1.11
+## Requirements
+  - Go 1.12+
