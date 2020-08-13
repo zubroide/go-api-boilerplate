@@ -68,7 +68,7 @@ sudo apt update
 sudo apt upgrade
 # See last version here: https://golang.org/dl/
 wget https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
-sudo tar -xvf go1.11.1.linux-amd64.tar.gz
+sudo tar -xvf go1.12.5.linux-amd64.tar.gz
 sudo mv go /usr/local
 sudo mcedit /etc/profile
 ```
