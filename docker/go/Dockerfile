@@ -2,7 +2,7 @@ FROM golang:1.12.5
 
 WORKDIR /go/src/go-api-boilerplate
 
-RUN go get github.com/go-swagger/go-swagger/cmd/swagger \
+RUN GO111MODULE="on" go get github.com/go-swagger/go-swagger/cmd/swagger \
     github.com/Altoros/gorm-goose/cmd/gorm-goose
 
 COPY ./docker/go/entrypoint.sh ./docker/wait-for-it.sh /root/
