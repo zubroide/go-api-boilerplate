@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/zubroide/go-api-boilerplate/command"
-	"github.com/zubroide/go-api-boilerplate/dic"
 	"fmt"
+	"os"
+
 	"github.com/getsentry/raven-go"
 	"github.com/spf13/viper"
-	"os"
+	"github.com/zubroide/go-api-boilerplate/command"
+	"github.com/zubroide/go-api-boilerplate/dic"
 )
 
 func readConfig() {
+	// changes from me
 	var err error
 
 	viper.SetConfigFile("base.env")
