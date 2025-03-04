@@ -1,5 +1,10 @@
 # Go API Boilerplate
 
+```
+  /')   |,\__/|
+ ( (   _|  o o|._   go-api-boilerplate
+--------)))---)))-----------------------
+```
 
 ## Features
 
