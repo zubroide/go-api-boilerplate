@@ -1,23 +1,24 @@
 package dic
 
 import (
-	"github.com/getsentry/raven-go"
-	"github.com/jinzhu/gorm"
+	sentrylogrus "github.com/getsentry/sentry-go/logrus"
 	"github.com/sarulabs/di/v2"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/zubroide/go-api-boilerplate/controller"
 	"github.com/zubroide/go-api-boilerplate/logger"
 	"github.com/zubroide/go-api-boilerplate/model/db"
-	"github.com/zubroide/go-api-boilerplate/model/repository"
 	"github.com/zubroide/go-api-boilerplate/model/service"
+	"gorm.io/gorm"
+	"strings"
 )
 
 var Builder *di.Builder
 var Container di.Container
 
-const RavenClient = "raven_client"
+const SentryHook = "SentryHook"
 const Logger = "logger"
 const Db = "db"
-const UserRepository = "repository.user"
 const UserService = "service.user"
 const UserController = "controller.user"
 
@@ -35,16 +36,29 @@ func InitBuilder() *di.Builder {
 
 func RegisterServices(builder *di.Builder) {
 	builder.Add(di.Def{
-		Name: RavenClient,
+		Name: SentryHook,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return logger.NewRavenClient(), nil
+			dsn := viper.GetString("SENTRY_DSN")
+			if dsn == "" {
+				var sh *sentrylogrus.Hook
+				return sh, nil
+			}
+			return logger.NewSentryHook(dsn)
 		},
 	})
 
 	builder.Add(di.Def{
 		Name: Logger,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return logger.NewLogger(ctn.Get(RavenClient).(*raven.Client)), nil
+			level, _ := logrus.ParseLevel(strings.ToLower(
+				viper.GetString("LOG_LEVEL"),
+			))
+			return logger.NewLogger(
+				ctn.Get(SentryHook).(*sentrylogrus.Hook),
+				//nil,
+				level,
+				viper.GetInt("SENTRY_TIMEOUT"),
+			), nil
 		},
 	})
 
@@ -56,16 +70,9 @@ func RegisterServices(builder *di.Builder) {
 	})
 
 	builder.Add(di.Def{
-		Name: UserRepository,
-		Build: func(ctn di.Container) (interface{}, error) {
-			return repository.NewUserRepository(ctn.Get(Db).(*gorm.DB), ctn.Get(Logger).(logger.LoggerInterface)), nil
-		},
-	})
-
-	builder.Add(di.Def{
 		Name: UserService,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return service.NewUserService(ctn.Get(UserRepository).(repository.UserRepositoryInterface), ctn.Get(Logger).(logger.LoggerInterface)), nil
+			return service.NewUserService(ctn.Get(Db).(*gorm.DB), ctn.Get(Logger).(logger.LoggerInterface)), nil
 		},
 	})
 

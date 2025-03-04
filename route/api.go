@@ -2,25 +2,24 @@
 //
 // Application description
 //
-//     Schemes: http
-//     Host: localhost:8080
-//     BasePath: /
-//     Version: 0.0.1
+//	Schemes: http
+//	Host: localhost:8080
+//	BasePath: /
+//	Version: 0.0.1
 //
-//     Consumes:
-//     - application/json
-//     - application/xml
+//	Consumes:
+//	- application/json
+//	- application/xml
 //
-//     Produces:
-//     - application/json
-//     - application/xml
+//	Produces:
+//	- application/json
+//	- application/xml
 //
 // swagger:meta
 package route
 
 import (
-	"github.com/getsentry/raven-go"
-	"github.com/gin-contrib/sentry"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/sarulabs/di/v2"
 	"github.com/spf13/viper"
@@ -30,6 +29,7 @@ import (
 	"github.com/zubroide/go-api-boilerplate/dic"
 	_ "github.com/zubroide/go-api-boilerplate/route/description" // For Swagger
 	"net/http"
+	"time"
 )
 
 var db = make(map[string]string)
@@ -40,10 +40,11 @@ func Setup(builder *di.Builder) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Recovery())
 
-	client := dic.Container.Get(dic.RavenClient).(*raven.Client)
-	if client != nil {
-		r.Use(sentry.Recovery(client, false))
-	}
+	r.Use(sentrygin.New(sentrygin.Options{
+		Repanic:         true,
+		WaitForDelivery: true,
+		Timeout:         time.Second * 5,
+	}))
 
 	// Display Swagger documentation
 	r.StaticFile("doc/swagger.json", "doc/swagger.json")
@@ -51,7 +52,7 @@ func Setup(builder *di.Builder) *gin.Engine {
 		URL: "/doc/swagger.json", //The url pointing to API definition
 	}
 	// use ginSwagger middleware to
-	r.GET("/swagger/*any", ginSwagger.CustomWrapHandler(config, swaggerFiles.Handler))
+	r.GET("/doc/swagger/*any", ginSwagger.CustomWrapHandler(config, swaggerFiles.Handler))
 
 	userController := dic.Container.Get(dic.UserController).(*controller.UserController)
 
@@ -67,17 +68,6 @@ func Setup(builder *di.Builder) *gin.Engine {
 		c.String(http.StatusOK, "pong")
 	})
 
-	// swagger:route GET /users/:id user getUser
-	//
-	// User
-	//
-	// Get user data
-	//
-	//     Responses:
-	//       200: UserResponse
-	r.GET("/users/:id", userController.Get)
-
-
 	// swagger:route GET /users user GetUsers
 	//
 	// Users list
@@ -87,37 +77,6 @@ func Setup(builder *di.Builder) *gin.Engine {
 	//     Responses:
 	//       200: UsersResponse
 	r.GET("/users", userController.List)
-
-	// swagger:route POST /users user CreateUser
-	//
-	// New user
-	//
-	// Create new user
-	//
-	//     Responses:
-	//       200: UserResponse
-	r.POST("/users", userController.Create)
-
-	// swagger:route PUT /users/:id user UpdateUser
-	//
-	// Update user
-	//
-	// Update existing user
-	//
-	//     Responses:
-	//       200: UserResponse
-	r.PUT("/users/:id", userController.Update)
-
-
-	// swagger:route DELETE /users/:id user DeleteUser
-	//
-	// Delete user
-	//
-	// Delete existing user
-	//
-	//     Responses:
-	//       200:
-	r.DELETE("/users/:id", userController.Delete)
 
 	// Authorized group (uses gin.BasicAuth() middleware)
 	// Same than:

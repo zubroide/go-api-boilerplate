@@ -2,54 +2,92 @@ package logger
 
 import (
 	"fmt"
-	"github.com/evalphobia/logrus_sentry"
-	"github.com/getsentry/raven-go"
+	"github.com/getsentry/sentry-go"
+	sentrylogrus "github.com/getsentry/sentry-go/logrus"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"os"
+	"runtime/debug"
 	"time"
 )
 
 type LoggerInterface interface {
+	Debug(args ...interface{})
+	Debugf(format string, args ...interface{})
+	Info(args ...interface{})
+	Infof(format string, args ...interface{})
+	Warn(args ...interface{})
+	Warnf(format string, args ...interface{})
 	Error(args ...interface{})
+	Errorf(format string, args ...interface{})
+	Fatal(args ...interface{})
+	Fatalf(format string, args ...interface{})
+	Print(args ...interface{})
 }
 
-func NewLogger(client *raven.Client) LoggerInterface {
-	logger := logrus.Logger{
-		Out:       os.Stdout,
-		Formatter: &logrus.TextFormatter{ForceColors: true},
-		Hooks:     make(logrus.LevelHooks),
-		Level:     logrus.InfoLevel,
-	}
+func NewLogger(sentryHook *sentrylogrus.Hook, level logrus.Level, sentryTimeout int) LoggerInterface {
+	logger := NewLoggerWithoutSentry(level)
 
-	if client != nil {
-		hook, err := logrus_sentry.NewWithClientSentryHook(client, []logrus.Level{
-			logrus.PanicLevel,
-			logrus.FatalLevel,
-			logrus.ErrorLevel,
+	if sentryHook != nil {
+		logger.AddHook(sentryHook)
+		// Flushes before calling os.Exit(1) when using logger.Fatal
+		// (else all defers are not called, and Sentry does not have time to send the event)
+		logrus.RegisterExitHandler(func() {
+			sentryHook.Flush(5 * time.Second)
 		})
-		timeout := viper.GetInt("SENTRY_TIMEOUT")
-		hook.Timeout = time.Duration(timeout) * time.Second
-		hook.StacktraceConfiguration.Enable = true
-
-		if err == nil {
-			logger.Hooks.Add(hook)
-		}
 	}
 
-	return &logger
+	return logger
 }
 
-func NewRavenClient() *raven.Client {
-	dsn := viper.Get("SENTRY_DSN")
-	if dsn == nil {
-		return nil
+func NewSentryHook(dsn string) (*sentrylogrus.Hook, error) {
+	sentryLevels := []logrus.Level{
+		logrus.WarnLevel,
+		logrus.ErrorLevel,
+		logrus.FatalLevel,
+		logrus.PanicLevel,
+	}
+	if dsn != "" {
+		sentry.Init(sentry.ClientOptions{
+			Dsn:              dsn,
+			AttachStacktrace: true,
+		})
+	}
+	sentryHook, err := sentrylogrus.New(sentryLevels, sentry.ClientOptions{
+		Dsn:              dsn,
+		EnableTracing:    true,
+		AttachStacktrace: true,
+		TracesSampleRate: 1.0,
+		//Debug:            true,
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer sentryHook.Flush(5 * time.Second)
+
+	return sentryHook, nil
+}
+
+func NewLoggerWithoutSentry(level logrus.Level) *logrus.Logger {
+	logger := &logrus.Logger{
+		Out: os.Stdout,
+		Formatter: &logrus.TextFormatter{
+			ForceColors:   true,
+			FullTimestamp: true,
+		},
+		Hooks: make(logrus.LevelHooks),
+		Level: level,
 	}
 
-	client, err := raven.New(dsn.(string))
+	return logger
+}
+
+func RecoverPanic() {
+	err := recover()
+
 	if err != nil {
-		fmt.Println("Fatal")
 		fmt.Println(err)
+		fmt.Println(string(debug.Stack()))
+		sentry.CurrentHub().Recover(err)
+		sentry.Flush(time.Second * 5)
 	}
-	return client
 }

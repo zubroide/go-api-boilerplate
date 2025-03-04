@@ -5,17 +5,16 @@ log() {
 }
 
 setup_db() {
-  log "Configuring the database"
-  gorm-goose up
+  log "Run migrations..."
+  goose up
+  log "Run seeders..."
+  go-api-boilerplate seed
 }
 
 log "Waiting for Postgres..."
 /root/wait-for-it.sh db:5432 --timeout=180 -- echo "PostgreSQL started"
 
 setup_db
-
-#log "Start cron..."
-#service cron start
 
 log "Start server"
 go-api-boilerplate server

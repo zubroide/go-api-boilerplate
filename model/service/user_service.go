@@ -2,21 +2,33 @@ package service
 
 import (
 	"github.com/zubroide/go-api-boilerplate/logger"
-	"github.com/zubroide/go-api-boilerplate/model/repository"
-	"github.com/zubroide/gorm-crud"
+	"github.com/zubroide/go-api-boilerplate/model/entity"
+	"gorm.io/gorm"
 )
 
 type UserServiceInterface interface {
-	gorm_crud.CrudServiceInterface
+	GetUsers(string) []*entity.User
 }
 
 type UserService struct {
-	*gorm_crud.CrudService
-	repository repository.UserRepositoryInterface
+	db     *gorm.DB
+	logger logger.LoggerInterface
 }
 
-func NewUserService(repository repository.UserRepositoryInterface, logger logger.LoggerInterface) UserServiceInterface {
-	crudService := gorm_crud.NewCrudService(repository, logger).(*gorm_crud.CrudService)
-	service := &UserService{crudService, repository}
+func NewUserService(db *gorm.DB, logger logger.LoggerInterface) UserServiceInterface {
+	service := &UserService{db, logger}
 	return service
+}
+
+func (s *UserService) GetUsers(name string) []*entity.User {
+	var items []*entity.User
+	res := s.db.
+		Where("name ilike ?||'%'", name).
+		Order("name").
+		Find(&items)
+	if res.Error != nil {
+		s.logger.Error(res.Error)
+	}
+	s.logger.Infof("test %+v", items)
+	return items
 }

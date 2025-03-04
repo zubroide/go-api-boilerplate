@@ -1,3 +1,6 @@
 development:
   driver: postgres
+  # Must be specified but is not used in the code
   open: $DB_URL
+  # Must be specified but is not used in the code
+  dsn: $DB_URL

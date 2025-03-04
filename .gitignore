@@ -1,6 +1,14 @@
 .idea
+.DS_Store
 
+vendor
 gin-bin
 .env
+.env.prod
+.env.local
+docker-compose.override.yml
 
 coverage.out
+dev.txt
+log.txt
+tmp*

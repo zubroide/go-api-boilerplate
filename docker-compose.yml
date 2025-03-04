@@ -1,5 +1,3 @@
-version: "3.3"
-
 volumes:
 
 #  code:
@@ -20,7 +18,6 @@ services:
       dockerfile: docker/go/Dockerfile
 #    volumes:
 #      - code:/go/src/go-api-boilerplate
-#      - ./docker/cron/crontab:/etc/cron.d/go-api-boilerplate
     ports:
     - 8080:80
     environment:

@@ -1,8 +1,8 @@
 package description
 
 import (
+	"github.com/zubroide/go-api-boilerplate/controller"
 	"github.com/zubroide/go-api-boilerplate/model/entity"
-	"github.com/zubroide/go-api-boilerplate/model/repository"
 )
 
 // User data
@@ -28,11 +28,11 @@ type UsersResponse struct {
 // swagger:parameters CreateUser UpdateUser
 type UserParameters struct {
 	// in: body
-	Body *entity.UserFields
+	Body *entity.User
 }
 
 // swagger:parameters GetUsers
 type UsersParameters struct {
 	// in: query
-	*repository.UserListParameters
+	*controller.UserListParameters
 }
