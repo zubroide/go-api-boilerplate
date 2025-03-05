@@ -12,7 +12,7 @@ type UserController struct {
 }
 
 type UserListParameters struct {
-	Name string
+	Name string `json:"name" form:"name"`
 }
 
 func NewUserController(service service.UserServiceInterface, logger logger.LoggerInterface) *UserController {
@@ -21,7 +21,14 @@ func NewUserController(service service.UserServiceInterface, logger logger.Logge
 
 func (c *UserController) List(ctx *gin.Context) {
 	var params UserListParameters
-	ctx.ShouldBindQuery(&params)
-	list := c.service.GetUsers(params.Name)
-	ctx.JSON(200, list)
+	if err := ctx.ShouldBind(&params); err != nil {
+		BadRequestJSON(ctx, err.Error())
+		return
+	}
+	list, err := c.service.GetUsers(params.Name)
+	if err != nil {
+		ServerErrorJSON(ctx, "Something went wrong")
+		return
+	}
+	SuccessJSON(ctx, list)
 }
